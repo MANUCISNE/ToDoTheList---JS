@@ -1,43 +1,26 @@
 const todos = []
 
+const nameInput = document.querySelector('#name');
+const newTodoForm = document.querySelector('#new-todo-form');
+const username = localStorage.getItem('username') || '';
+
+
 window.addEventListener('load', () => {
 	const dadosSalvos = JSON.parse(localStorage.getItem('todos'));
 
-	dadosSalvos.forEach(a=>todos.push(a));
-	const nameInput = document.querySelector('#name');
-	const newTodoForm = document.querySelector('#new-todo-form');
-
-	const username = localStorage.getItem('username') || '';
+	dadosSalvos.forEach(a => todos.push(a));
 
 	nameInput.value = username;
 
-	nameInput.addEventListener('change', e =>
-		localStorage.setItem('username', e.target.value)
-	)
-
-	newTodoForm.addEventListener('submit', e => {
-		e.preventDefault();
-		if(!e.target.elements.content.value.trim()) return
-
-		const todo = {
-			content: e.target.elements.content.value,
-			category: e.target.elements.category.value,
-			done: false,
-			createdAt: new Date().getTime()
-		}
-
-		todos.push(todo);
-
-		localStorage.setItem('todos', JSON.stringify(todos));
-
-		// Reset the form
-		e.target.reset();
-
-		DisplayTodos()
-	})
-
 	DisplayTodos()
 })
+
+function resetForm() {
+	newTodoForm.content.value = ''
+	newTodoForm.idForm.value = null
+	newTodoForm.category.value = 'business'
+	newTodoForm.submit.value = 'ADD TODO'
+}
 
 function DisplayTodos() {
 	const todoList = document.getElementById('todo-list');
@@ -68,26 +51,26 @@ function DisplayTodos() {
 			'div',
 			[{ attribute: 'class', value: 'todo-content' }],
 			[CreateElementSetAttribute(
-				'input',
+				'span',
+				null,
 				[
-					{ attribute: 'type', value: 'text' },
-					{ attribute: 'value', value: todo.content },
-					{ attribute: 'readonly', value: '' },
-
-				],
+					todo.content
+				]
 
 			)]
 		)
 		const editButton = CreateElementSetAttribute('button',
 			[
 				{ attribute: 'class', value: 'edit' },
-				// { attribute: 'onclick', value: editFunction(content, todo) },
+				{ attribute: 'id', value: todo.id },
+
 			],
 			['edit']
 		)
 		const deleteButton = CreateElementSetAttribute('button',
 			[
 				{ attribute: 'class', value: 'delete' },
+				{ attribute: 'id', value: todo.id },
 			],
 			['Delete']
 		)
@@ -112,8 +95,8 @@ function DisplayTodos() {
 
 
 		input.addEventListener('change', (e) => changeStatus(e, todo, todoItem))
-		editButton.addEventListener('click', () => editFunction(content, todo))
-		deleteButton.addEventListener('click', () => deleteButtonClick(todo))
+		editButton.addEventListener('click', () => editFunction(todo.id))
+		deleteButton.addEventListener('click', () => deleteButtonClick(todo.id))
 	})
 
 }
@@ -131,27 +114,60 @@ function changeStatus(e, todo, todoItem) {
 	DisplayTodos()
 }
 
-function editFunction(content, todo) {
-	const input = content.querySelector('input');
-	input.removeAttribute('readonly');
-	input.focus();
-	input.addEventListener('blur', (e) => {
-		input.setAttribute('readonly', true);
-		todo.content = e.target.value;
-		localStorage.setItem('todos', JSON.stringify(todos));
-		DisplayTodos()
+function editFunction(id) {
+	const itemFiltrado = todos.findIndex(t => t.id == id)
 
-	})
+	newTodoForm.content.value = todos[itemFiltrado].content
+	newTodoForm.category.value = todos[itemFiltrado].category
+	newTodoForm.idForm.value = todos[itemFiltrado].id
+	newTodoForm.submit.value = 'SAVE EDIT'
 }
 
-function deleteButtonClick(todo) {
-	const itemFiltrado = todos.findIndex(t => t == todo)
+function deleteButtonClick(id) {
+	const itemFiltrado = todos.findIndex(t => t.id == id)
 	todos.splice(itemFiltrado, 1)
-	// todos = todos.filter(t => t != todo);
-	localStorage.setItem('todos', JSON.stringify(todos));
-	DisplayTodos()
 
+	localStorage.setItem('todos', JSON.stringify(todos));
+
+	DisplayTodos()
 }
+
+newTodoForm.addEventListener('submit', e => {
+	e.preventDefault();
+	if (!e.target.elements.content.value.trim()) return
+
+	const id = todos.length > 0 ? todos.map(a => a.id).sort((a, b) => a - b)[0] + 1 : 1
+	const idInput = document.querySelector('input[name="id"]')
+
+
+	if (!idInput.value) {
+		todos.push({
+			id,
+			content: e.target.elements.content.value,
+			category: e.target.elements.category.value,
+			done: false,
+			createdAt: new Date().getTime()
+		})
+	} else {
+		const rebuild = todos.findIndex(obj => obj.id == idInput.value)
+
+		todos[rebuild].category = e.target.elements.category.value
+		todos[rebuild].content = e.target.elements.content.value
+	}
+
+
+	localStorage.setItem('todos', JSON.stringify(todos));
+
+	// Reset the form
+	e.target.reset();
+
+	DisplayTodos()
+	newTodoForm.submit.value = 'ADD TODO'
+})
+
+nameInput.addEventListener('change', e =>
+	localStorage.setItem('username', e.target.value)
+)
 
 /**
  * 
@@ -160,12 +176,12 @@ function CreateElementSetAttribute(element, attributeList = [], content = []) {
 	if (!element) return
 	const htmlElement = document.createElement(element)
 
-	if (content.length) content.forEach(a => {
+	if (content?.length) content.forEach(a => {
 		if (typeof a == 'string') htmlElement.innerHTML = a
 		else htmlElement.append(a)
 	})
 
-	if (attributeList.length) attributeList.forEach(a =>
+	if (attributeList?.length) attributeList.forEach(a =>
 		htmlElement.setAttribute(a.attribute, a.value))
 
 	return htmlElement

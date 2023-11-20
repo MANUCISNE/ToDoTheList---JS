@@ -49,8 +49,12 @@
 						<div>Personal</div>
 					</label>
 				</div>
+				<input id="idForm" name="id" type="number" hidden>
+				<div class="options">
 
-				<input type="submit" value="Add todo" />
+					<input id="submit" type="submit" value="Add todo" />
+					<button type="button" theme="blue" onclick=resetForm() >Clear</button>
+				</div>
 			</form>
 		</section>
 		<!-- End of New Todo -->
