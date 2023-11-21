@@ -135,8 +135,9 @@ function deleteButtonClick(id) {
 newTodoForm.addEventListener('submit', e => {
 	e.preventDefault();
 	if (!e.target.elements.content.value.trim()) return
+	console.log(todos.map(a => a.id).sort((a, b) => a - b).reverse()[0])
 
-	const id = todos.length > 0 ? todos.map(a => a.id).sort((a, b) => a - b)[0] + 1 : 1
+	const id = todos.length > 0 ? todos.map(a => a.id).sort((a, b) => a - b).reverse()[0] + 1 : 1
 	const idInput = document.querySelector('input[name="id"]')
 
 
