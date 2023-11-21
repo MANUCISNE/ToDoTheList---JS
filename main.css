@@ -164,7 +164,7 @@ input:checked ~ .bubble::after {
 	font-weight: 700;
 	text-transform: uppercase;
 	background-color: var(--business);
-	box-shadow: var(--personal-glow);
+	box-shadow: var(--business-glow);
 	border-radius: 0.5rem;
 	cursor: pointer;
 	transition: 0.2s ease-out;
