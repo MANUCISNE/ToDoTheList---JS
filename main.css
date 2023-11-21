@@ -170,6 +170,10 @@ input:checked ~ .bubble::after {
 	transition: 0.2s ease-out;
 }
 
+.create-todo button[theme="blue"]:hover {
+	opacity: 0.75;
+}
+
 .create-todo input[type="submit"] {
 	display: block;
 	width: 100%;
