@@ -1,9 +1,11 @@
 const todos = []
 
 const nameInput = document.querySelector('#name');
+const nameInputTitle = document.querySelector('#name-title');
 const newTodoForm = document.querySelector('#new-todo-form');
 const username = localStorage.getItem('username') || '';
 
+	
 
 window.addEventListener('load', () => {
 	const dadosSalvos = JSON.parse(localStorage.getItem('todos'));
@@ -11,6 +13,13 @@ window.addEventListener('load', () => {
 	dadosSalvos.forEach(a => todos.push(a));
 
 	nameInput.value = username;
+	nameInputTitle.innerText = username;
+
+	if(username) {
+		nameInput.style = 'display:none'
+		nameInputTitle.style = 'display:flex'
+
+	}
 
 	DisplayTodos()
 })
@@ -166,9 +175,20 @@ newTodoForm.addEventListener('submit', e => {
 	newTodoForm.submit.value = 'ADD TODO'
 })
 
-nameInput.addEventListener('change', e =>
+
+
+nameInput.addEventListener('change', e =>{
+	nameInputTitle.innerText = nameInput.value
+	nameInputTitle.style = 'display:flex'
+	nameInput.style = 'display:none'
+
 	localStorage.setItem('username', e.target.value)
-)
+})
+
+nameInputTitle.addEventListener('click', e =>{
+	nameInput.style = 'display:flex'
+	nameInputTitle.style = 'display:none'
+})
 
 /**
  * 
