@@ -25,8 +25,5 @@ O projeto possui as seguintes funcionalidades:
 
 Isso iniciará a aplicação no seu navegador padrão.
 
-## Demonstração
-
-https://github.com/MANUCISNE/ToDoTheList---JS/assets/117774887/e29b8dd3-8f80-41db-8d3e-8b3b7d9099ed
 
 
